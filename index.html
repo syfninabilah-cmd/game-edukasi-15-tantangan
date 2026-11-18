@@ -32,8 +32,9 @@ textarea{width:100%;height:80px;font:inherit;font-size:19px;border-radius:8px;bo
 code{font-family:Consolas,monospace;background:#0b1620;padding:2px 8px;border-radius:6px;color:#F2B84B}
 [draggable=true]{cursor:grab}
 .col>.card .slot{padding:1px 0!important;font-size:14px}
+#rot{display:none}@media (orientation:portrait){#rot{display:block;position:fixed;left:0;right:0;bottom:0;z-index:9;background:#F2B84B;color:#12263A;text-align:center;font-weight:700;padding:10px;font-size:15px}}
 </style></head><body>
-<div id="stage"><div id="hd"></div><div id="mn"></div><div id="ft"></div></div>
+<div id="rot">Putar HP ke posisi mendatar (landscape) agar game tampil penuh</div><div id="stage"><div id="hd"></div><div id="mn"></div><div id="ft"></div></div>
 <script>
 const E=id=>document.getElementById(id);
 const Z=()=>Array(16).fill(0);const S={scr:'cover',done:Z(),sc:Z(),lv:Array(16).fill(3),m:Array(16).fill(null)};
@@ -115,10 +116,4 @@ const N=TT;
 const K=[['Mengenali',S.sc[0]/500],['Menyusun',(S.sc[1]+S.sc[2]+S.sc[3])/1400],['Menganalisis',(S.sc[4]+S.sc[15])/800]],lo=K.slice().sort((a,b)=>a[1]-b[1])[0][0];
 E('mn').innerHTML='<div class="row"><div class="card col" style="align-items:center;text-align:center;justify-content:center;gap:6px"><div style="font-size:56px;color:#F2B84B" aria-label="'+n+' bintang">'+'★'.repeat(n)+'☆'.repeat(3-n)+'</div><h2 style="margin:0">'+L+'</h2><p style="font-size:24px;margin:0">Skor total: <b>'+t+'</b></p>'+K.map(k=>'<div style="width:100%;text-align:left;font-size:17px">'+k[0]+'<div style="height:12px;background:#0b1620;border-radius:6px"><div style="height:12px;width:'+Math.round(Math.min(1,k[1])*100)+'%;background:#F2B84B;border-radius:6px"></div></div></div>').join('')+'<p style="font-size:18px;margin:4px 0">Saran: ulangi misi yang melatih kemampuan '+lo.toLowerCase()+'.</p><button class="pri" id="ag">Main lagi</button></div><div class="col"><div class="card"><h2 style="font-size:24px">Ringkasan pencapaian</h2>'+N.map((x,i)=>'<div class="slot" style="padding:5px 0">'+''+x+' <b style="float:right">'+S.sc[i]+'</b></div>').join('')+'</div><div class="card"><h2 style="font-size:22px">Refleksi</h2><p style="font-size:19px">Jika klien melapor aplikasi crash, apa yang pertama kali kamu lakukan dan mengapa?</p><textarea style="height:60px" aria-label="Jawaban refleksi"></textarea></div></div></div>';
 E('ag').onclick=()=>{S.done=Z();S.sc=Z();S.lv=Array(16).fill(3);S.m=Array(16).fill(null);go('menu')}},
-credit(){E('mn').innerHTML='<h2>Informasi kreator</h2><div class="card"><p>Kreator: [isi nama kreator, boleh disertai gelar]</p><p>Organisasi: [isi nama sekolah atau institusi]</p></div><div class="card" style="margin-top:14px"><p style="font-size:20px">Aset: seluruh ilustrasi berupa grafik vektor (SVG) yang dibuat oleh pengembang. Bunyi umpan balik dihasilkan oleh Web Audio API. Tidak ada aset atau tautan eksternal.</p></div>'}
-};
-
-/* ---------- aksi ---------- */
-const A={
-g:v=>{const i=v=='demo'?15:+v.slice(1)-1;if(S.done[i]){S.done[i]=0;S.sc[i]=0;S.lv[i]=3;S.m[i]=null}go(v)},
-k1(k){const 
+credit(){E('mn').innerHTML='<h2>Informasi kreator</h2><div class="card"><p>Kreator: [isi nama kreator, boleh disertai gelar]</p><p>Organisasi: [isi nama sekolah atau institusi]</p></div><div class="card" style="margin-top:14px"><p style="font-size:20px">Aset: seluruh ilustrasi berupa grafik vektor (SVG)
