@@ -34,7 +34,8 @@ code{font-family:Consolas,monospace;background:#0b1620;padding:2px 8px;border-ra
 .col>.card .slot{padding:1px 0!important;font-size:14px}
 #rot{display:none}@media (orientation:portrait){#rot{display:block;position:fixed;left:0;right:0;bottom:0;z-index:9;background:#F2B84B;color:#12263A;text-align:center;font-weight:700;padding:10px;font-size:15px}}
 </style></head><body translate="no"><script>onerror=function(m,u,l){var d=document.createElement("div");d.style.cssText="position:fixed;left:0;right:0;top:0;z-index:99;background:#B3261E;color:#fff;padding:10px;font:14px sans-serif";d.textContent="Error: "+m+" (baris "+l+")";document.body.appendChild(d)}</script>
-<div id="rot">Putar HP ke posisi mendatar (landscape) agar game tampil penuh</div><div id="stage"><div id="hd"></div><div id="mn" style="font-size:28px">Memuat game…</div><div id="ft"></div></div>
+<div id="rot">Putar HP ke posisi mendatar (landscape) agar game tampil penuh</div><div id="stage"><div id="hd"></div><div id="mn" style="font-size:28px">Memuat game…<noscript><br>JavaScript di browsermu dimatikan.</noscript></div><div id="ft"></div></div>
+<script>document.getElementById("mn").innerHTML="JavaScript aktif, tetapi game gagal dimuat. Kirim tangkapan layar ini."</script>
 <script>
 const E=id=>document.getElementById(id);
 const Z=()=>Array(16).fill(0);const S={scr:'cover',done:Z(),sc:Z(),lv:Array(16).fill(3),m:Array(16).fill(null)};
@@ -115,4 +116,84 @@ result(){const t=total(),p=Math.min(1,t/6300),n=p>=.85?3:p>=.6?2:1,L=['Calon dev
 const N=TT;
 const K=[['Mengenali',S.sc[0]/500],['Menyusun',(S.sc[1]+S.sc[2]+S.sc[3])/1400],['Menganalisis',(S.sc[4]+S.sc[15])/800]],lo=K.slice().sort((a,b)=>a[1]-b[1])[0][0];
 E('mn').innerHTML='<div class="row"><div class="card col" style="align-items:center;text-align:center;justify-content:center;gap:6px"><div style="font-size:56px;color:#F2B84B" aria-label="'+n+' bintang">'+'★'.repeat(n)+'☆'.repeat(3-n)+'</div><h2 style="margin:0">'+L+'</h2><p style="font-size:24px;margin:0">Skor total: <b>'+t+'</b></p>'+K.map(k=>'<div style="width:100%;text-align:left;font-size:17px">'+k[0]+'<div style="height:12px;background:#0b1620;border-radius:6px"><div style="height:12px;width:'+Math.round(Math.min(1,k[1])*100)+'%;background:#F2B84B;border-radius:6px"></div></div></div>').join('')+'<p style="font-size:18px;margin:4px 0">Saran: ulangi misi yang melatih kemampuan '+lo.toLowerCase()+'.</p><button class="pri" id="ag">Main lagi</button></div><div class="col"><div class="card"><h2 style="font-size:24px">Ringkasan pencapaian</h2>'+N.map((x,i)=>'<div class="slot" style="padding:5px 0">'+''+x+' <b style="float:right">'+S.sc[i]+'</b></div>').join('')+'</div><div class="card"><h2 style="font-size:22px">Refleksi</h2><p style="font-size:19px">Jika klien melapor aplikasi crash, apa yang pertama kali kamu lakukan dan mengapa?</p><textarea style="height:60px" aria-label="Jawaban refleksi"></textarea></div></div></div>';
-E('ag').onclick=()=>{S.done=Z();S.sc=
+E('ag').onclick=()=>{S.done=Z();S.sc=Z();S.lv=Array(16).fill(3);S.m=Array(16).fill(null);go('menu')}},
+credit(){E('mn').innerHTML='<h2>Informasi kreator</h2><div class="card"><p>Kreator: [isi nama kreator, boleh disertai gelar]</p><p>Organisasi: [isi nama sekolah atau institusi]</p></div><div class="card" style="margin-top:14px"><p style="font-size:20px">Aset: seluruh ilustrasi berupa grafik vektor (SVG) yang dibuat oleh pengembang. Bunyi umpan balik dihasilkan oleh Web Audio API. Tidak ada aset atau tautan eksternal.</p></div>'}
+};
+
+/* ---------- aksi ---------- */
+const A={
+g:v=>{const i=v=='demo'?15:+v.slice(1)-1;if(S.done[i]){S.done[i]=0;S.sc[i]=0;S.lv[i]=3;S.m[i]=null}go(v)},
+k1(k){const m=S.m[0];if(m.ok.includes(k))return;m.sel=k;R.m1();fb('Bagian dipilih. Sekarang pilih fungsinya.')},
+d1(v){const m=S.m[0];v=+v;if(!m.sel){fb('Klik dulu salah satu bagian jendela.','bad');return}
+ if(P[v][2]==m.sel){m.ok.push(m.sel);m.sel=null;S.sc[0]+=100;snd(1);R.m1();hud();
+  if(m.ok.length==5){S.done[0]=1;nav();fb('Misi 1 selesai! Kamu sudah mengenal ruang kerjamu. +100','ok')}else fb('Benar! '+P[v][0]+': '+P[v][1]+'. +100','ok')}
+ else{lose(0);fb('Belum tepat. Petunjuk: '+P.find(p=>p[2]==m.sel)[3],'bad')}},
+s2(v){const m=S.m[1];v=+v;
+ if(v==m.n){m.n++;S.sc[1]+=100;snd(1);R.m2();hud();
+  if(m.n==6){S.done[1]=1;nav();fb('Misi 2 selesai! Aplikasimu berjalan. '+EX[v]+' +100','ok')}else fb('Tepat! '+EX[v]+' +100','ok')}
+ else{lose(1);fb('Belum urutan itu. Tanyakan: apa yang harus siap sebelum langkah ini?','bad')}},
+o5(v){const m=S.m[4],c=Q[m.q],bs=document.querySelectorAll('[data-a=o5]');v=+v;
+ if(v==c.a){const pts=m.w?50:100;S.sc[4]+=pts;snd(1);bs.forEach((b,i)=>{b.disabled=true;if(i==v)b.classList.add('ok')});
+  if(m.q==2){stopT();const bn=m.t*2;S.sc[4]+=bn;S.done[4]=1;nav();fb(c.e+' +'+pts+'. Misi 5 selesai! Bonus waktu +'+bn,'ok')}
+  else{fb(c.e+' +'+pts,'ok');E('mn').insertAdjacentHTML('beforeend','<button class="pri" style="margin-top:10px" data-a="n5">Kasus berikutnya</button>')}
+  hud()}
+ else{m.w=1;bs[v].disabled=true;bs[v].classList.add('bad');lose(4);fb('Belum tepat. Pikirkan lagi penyebab masalah sebelum bertindak. Coba pilihan lain.','bad')}},
+n5(){const m=S.m[4];m.q++;m.w=0;R.m5()},
+c3(v){const m=S.m[2];if(m.ok.includes(v))return;m.sel=v;R.m3();fb('Komponen '+v+' dipilih. Sekarang pilih tempatnya.')},
+t3(i){const m=S.m[2],HI=['Judul berupa teks yang hanya ditampilkan.','Pengguna harus bisa mengetik di sini.','Pengguna menekan ini untuk menjalankan aksi.','Ini menampilkan gambar, bukan teks.'];i=+i;
+ if(!m.sel){fb('Pilih dulu komponennya.','bad');return}
+ if(m.ok.includes(SL[i]))return;
+ if(SL[i]==m.sel){m.ok.push(m.sel);m.sel=null;S.sc[2]+=100;snd(1);R.m3();hud();
+  if(m.ok.length==4){S.done[2]=1;nav();fb('Misi 3 selesai! Layar kasir siap dipakai. +100','ok')}else fb('Tepat! Komponen itu cocok dengan tempatnya. +100','ok')}
+ else{lose(2);fb('Belum cocok. Petunjuk: '+HI[i],'bad')}},
+w4(v){const m=S.m[3],ans=['btn_hitung','setOnClickListener','edit_harga','toString'],EX=['ID harus sama persis dengan di layout.','Aksi klik dipasang dengan setOnClickListener.','Kolom harga memakai ID edit_harga.','Isi kolom diambil sebagai teks dengan toString().'];
+ if(v==ans[m.n]){m.n++;S.sc[3]+=100;snd(1);R.m4();hud();
+  if(m.n==4){S.done[3]=1;nav();fb('Misi 4 selesai! Tombol Hitung kini berfungsi. +100','ok')}else fb('Tepat! '+EX[m.n-1]+' +100','ok')}
+ else{lose(3);fb('Belum tepat. Cek lagi ID di layout dan nama fungsi yang dipakai.','bad')}},
+o6(v){const m=S.m[15],c=D[m.set[m.q]],bs=document.querySelectorAll('[data-a=o6]');v=+v;
+ bs.forEach((b,i)=>{b.disabled=true;if(i==c.a)b.classList.add('ok');else if(i==v)b.classList.add('bad')});
+ if(v==c.a){S.sc[15]+=100;snd(1);fb('Benar! '+c.e+' +100','ok')}else{snd(0);fb('Belum tepat. '+c.e,'bad')}
+ hud();
+ if(m.q==4){S.done[15]=1;nav();fb(E('fb').textContent+' Demo selesai!',E('fb').className)}
+ else E('mn').insertAdjacentHTML('beforeend','<button class="pri" style="margin-top:10px" data-a="n6">Soal berikutnya</button>')},
+n6(){S.m[15].q++;R.demo()},
+};
+/* ---------- misi 6-15 ---------- */
+const TT=['Misi 1: Kenali ruang kerja','Misi 2: Mulai proyek','Misi 3: Rancang layar kasir','Misi 4: Hubungkan kode','Misi 5: Tiket bug dari klien','Misi 6: Uji di HP sungguhan','Misi 7: Pindah layar','Misi 8: Tata letak layar','Misi 9: Pesan untuk kasir','Misi 10: Buat APK rilis','Misi 11: Kelola resource','Misi 12: Simpan data','Misi 13: Izin aplikasi','Misi 14: Debug breakpoint','Misi 15: Kerja tim dan rilis','Demo ke klien'];
+const X=[
+{t:'u',h:'Misi 6: Uji di HP sungguhan',p:'Klik langkah sesuai urutan yang benar, mulai dari yang paling awal.',s:['Ketuk Nomor build 7 kali di Pengaturan untuk membuka Opsi Pengembang','Aktifkan USB debugging','Sambungkan HP ke komputer dengan kabel USB','Ketuk Izinkan pada pesan debugging di HP','Pilih HP sebagai perangkat di toolbar','Klik tombol Run'],x:['Opsi Pengembang tersembunyi sampai diaktifkan.','USB debugging membuat komputer bisa berkomunikasi dengan HP.','Kabel menghubungkan HP setelah debugging aktif.','HP harus mengizinkan komputer tepercaya.','Pilih tujuan sebelum menjalankan.','Terakhir, jalankan dan lihat hasilnya di HP.']},
+{t:'i',h:'Misi 7: Pindah ke layar riwayat',p:'Isi bagian kuning dari atas ke bawah.',c:'val i = @@(this, RiwayatActivity::class.java)<br>@@(i)<br>&lt;@@ android:name=".RiwayatActivity" /&gt; <span style="color:#8fb0cc">// di Manifest</span>',a:['Intent','startActivity','activity'],w:['Intent','startActivity','activity','Toast','finish','service'],x:['Intent membawa tujuan perpindahan layar.','startActivity menjalankan Intent itu.','Setiap Activity wajib didaftarkan di Manifest.']},
+{t:'o',h:'Misi 8: Tata letak yang lentur',p:'Pilih keputusan desain yang paling tepat.',k:[{q:'Layar kasir terpotong di HP berlayar kecil. Pengaturan mana yang paling tepat?',o:['Ukuran teks dalam sp dan lebar match_parent atau wrap_content','Semua ukuran ditulis dalam piksel tetap (px)','Hapus teks yang panjang'],a:0,e:'sp dan dp menyesuaikan kepadatan layar, sedangkan px tetap bisa terpotong.'},{q:'Tombol harus selalu menempel di bawah layar dan komponen lain mengikuti posisinya. Layout yang cocok?',o:['ConstraintLayout','Folder res/drawable','Logcat'],a:0,e:'ConstraintLayout mengatur posisi lewat batasan antar-komponen.'}]},
+{t:'i',h:'Misi 9: Pesan untuk kasir',p:'Teks disimpan di strings.xml dengan nama <code>pesan_sukses</code>. Isi bagian kuning.',c:'Toast.@@(this, getString(R.string.@@), Toast.@@).show()',a:['makeText','pesan_sukses','LENGTH_SHORT'],w:['makeText','pesan_sukses','LENGTH_SHORT','showText','pesanSukses','TOAST_LONG'],x:['makeText membuat pesan singkat di layar.','Teks diambil dari strings.xml lewat R.string.','LENGTH_SHORT menampilkan pesan sebentar.']},
+{t:'u',h:'Misi 10: Buat APK rilis',p:'Urutkan langkah membuat file APK untuk klien.',s:['Pilih Build lalu Generate Signed Bundle / APK','Pilih APK, lalu klik Next','Buat atau pilih keystore dan isi passwordnya','Pilih build variant release','Klik Create dan tunggu proses selesai'],x:['Menu pembuatan paket ada di Build.','APK bisa dipasang langsung di HP.','Keystore adalah kunci tanda tangan aplikasi.','Varian release adalah versi untuk pengguna.','Terakhir, buat file APK-nya.']},
+{t:'o',h:'Misi 11: Kelola resource',p:'Pilih tempat penyimpanan yang tepat.',k:[{q:'Di mana teks tombol "Hitung" sebaiknya disimpan agar mudah diubah dan diterjemahkan?',o:['res/values/strings.xml','Ditulis berulang di tiap file kode','AndroidManifest.xml'],a:0,e:'strings.xml memusatkan teks sehingga mudah diganti dan diterjemahkan.'},{q:'Logo koperasi berformat PNG disimpan di folder...',o:['res/drawable','res/layout','Gradle Scripts'],a:0,e:'Gambar disimpan di res/drawable.'}]},
+{t:'i',h:'Misi 12: Simpan data kasir',p:'Lengkapi kode penyimpanan data sederhana.',c:'val pref = getSharedPreferences("kasir", @@)<br>pref.edit().putInt("total", total).@@()<br>val t = pref.@@("total", 0)',a:['MODE_PRIVATE','apply','getInt'],w:['MODE_PRIVATE','apply','getInt','getString','delete','MODE_OPEN'],x:['MODE_PRIVATE membuat data hanya terbaca oleh aplikasi ini.','apply menyimpan perubahan.','getInt membaca angka dengan nilai bawaan 0.']},
+{t:'o',h:'Misi 13: Izin aplikasi',p:'Putuskan tindakan yang tepat.',k:[{q:'Aplikasi kasir ingin memakai kamera untuk memindai barcode. Apa yang harus dilakukan?',o:['Menambah izin CAMERA di Manifest dan meminta izin saat aplikasi berjalan','Tidak perlu melakukan apa-apa','Mengganti nama package'],a:0,e:'Izin sensitif harus dideklarasikan di Manifest dan diminta ke pengguna.'},{q:'Pengguna menolak izin kamera. Tindakan terbaik?',o:['Jelaskan manfaatnya dan tetap sediakan fitur lain','Menutup aplikasi paksa','Meminta izin berulang tanpa henti'],a:0,e:'Hargai pilihan pengguna dan beri alternatif.'}]},
+{t:'u',h:'Misi 14: Cari bug dengan breakpoint',p:'Urutkan langkah debugging dari awal.',s:['Klik di samping nomor baris untuk memasang breakpoint','Klik tombol Debug','Tekan tombol Hitung di aplikasi sampai kode berhenti','Periksa nilai di panel Variables','Klik Step Over untuk lanjut baris berikutnya','Hentikan sesi debug setelah penyebabnya ketemu'],x:['Breakpoint menandai baris tempat program berhenti.','Mode Debug diperlukan agar breakpoint aktif.','Aksi di aplikasi memicu kode sampai berhenti.','Nilai variabel memperlihatkan data sebenarnya.','Step Over menelusuri kode baris demi baris.','Akhiri sesi setelah selesai.']},
+{t:'o',h:'Misi 15: Kerja tim dan rilis',p:'Ambil keputusan seperti developer profesional.',k:[{q:'Bug sudah diperbaiki. Langkah terbaik di Git?',o:['Commit dengan pesan jelas lalu push ke repositori','Menghapus folder .git','Menyalin proyek ke flashdisk tanpa catatan'],a:0,e:'Commit berpesan jelas memudahkan tim melacak perubahan.'},{q:'Sebelum menyerahkan aplikasi ke klien, apa yang paling penting?',o:['Menguji di beberapa ukuran layar dan versi Android','Langsung mengirim tanpa uji','Menambah fitur baru dulu'],a:0,e:'Pengujian di banyak perangkat mencegah bug muncul di tangan klien.'},{q:'Klien meminta fitur tambahan yang mustahil selesai sebelum tenggat. Respons profesional?',o:['Jelaskan batas waktu, tawarkan prioritas, jadwalkan fitur itu di versi berikutnya','Menyanggupi lalu begadang tanpa kabar','Mengabaikan permintaan'],a:0,e:'Komunikasi terbuka dan prioritas menjaga kepercayaan klien.'}]}];
+function RX(i){const d=X[i-5],m=S.m[i]=S.m[i]||{n:0,sh:d.t=='u'?d.s.map((_,k)=>k).sort(()=>Math.random()-.5):null},dn=S.done[i]?' disabled':'';
+let h='<h2>'+d.h+'</h2><p>'+d.p+'</p>';
+if(d.t=='o'){const c=d.k[Math.min(m.n,d.k.length-1)];h+='<div style="font-size:20px;margin-bottom:6px">Soal '+(Math.min(m.n,d.k.length-1)+1)+' dari '+d.k.length+'</div><div class="card"><p style="margin:0">'+c.q+'</p></div><div class="col" style="margin-top:12px;gap:8px">'+c.o.map((o,k)=>'<button data-a="x" data-v="'+k+'"'+dn+'>'+o+'</button>').join('')+'</div>'}
+else if(d.t=='u'){h+='<div class="row"><div class="col" style="gap:8px">'+m.sh.map(k=>'<button data-a="x" data-v="'+k+'" class="'+(k<m.n?'ok':'')+'" '+(k<m.n?'disabled':'')+'>'+d.s[k]+'</button>').join('')+'</div><div class="card col" style="gap:0">'+d.s.map((s,k)=>'<div class="slot">'+(k+1)+'. '+(k<m.n?s:'…')+'</div>').join('')+'</div></div>'}
+else{let k=0;const code=d.c.replace(/@@/g,()=>{const j=k++;return '<span style="display:inline-block;min-width:130px;padding:0 8px;border-radius:6px;text-align:center;background:'+(j<m.n?'#1F7A52':(j==m.n?'#F2B84B':'#0b1620'))+';color:'+(j==m.n?'#12263A':'#fff')+';border:1px dashed #8fb0cc">'+(j<m.n?d.a[j]:'____')+'</span>'});
+h+='<div class="card" style="font-family:Consolas,monospace;font-size:21px;line-height:2.1">'+code+'</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">'+d.w.map(w=>'<button data-a="x" data-v="'+w+'"'+dn+'>'+w+'</button>').join('')+'</div>'}
+E('mn').innerHTML=h+'<div id="fb">'+(d.t=='u'?'Langkah apa yang paling awal?':'Pilih jawaban yang paling tepat.')+'</div>'}
+for(let n=6;n<=15;n++)R['m'+n]=()=>RX(n-1);
+R.menu=()=>{E('mn').innerHTML='<h2 style="font-size:26px;margin-bottom:10px">Menu misi</h2><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">'+TT.map((t,i)=>'<div class="card col" style="gap:4px;padding:6px 12px"><b style="font-size:14px;color:#F2B84B">'+(i<15?'Misi '+(i+1):'Demo')+(S.done[i]?' · skor '+S.sc[i]:'')+'</b><span style="font-size:16px;min-height:22px">'+t.replace(/^Misi \d+: /,'')+'</span><button class="pri" style="min-height:36px;padding:4px 10px;font-size:16px" data-a="g" data-v="'+(i<15?'m'+(i+1):'demo')+'">'+(S.done[i]?'Main lagi':'Mainkan')+'</button></div>').join('')+'</div>'};
+A.x=function(v){const i=+S.scr.slice(1)-1,d=X[i-5],m=S.m[i];if(S.done[i])return;
+let ok,msg,len;
+if(d.t=='o'){const c=d.k[m.n];ok=+v==c.a;msg=c.e;len=d.k.length}
+else if(d.t=='u'){ok=+v==m.n;msg=d.x[m.n];len=d.s.length}
+else{ok=v==d.a[m.n];msg=d.x[m.n];len=d.a.length}
+if(!ok){lose(i);const b=document.querySelector('[data-a=x][data-v="'+v+'"]');if(b&&d.t!='u'){b.disabled=true;b.classList.add('bad')}fb(d.t=='u'?'Belum urutan itu. Apa yang harus siap sebelum langkah ini?':'Belum tepat. Pikirkan lagi lalu coba pilihan lain.','bad');return}
+S.sc[i]+=100;snd(1);m.n++;const fin=m.n==len;if(fin)S.done[i]=1;RX(i);hud();nav();
+fb(msg+(fin?' Misi selesai! +100':' +100'),'ok')};
+
+E('mn').onclick=e=>{const t=e.target.closest('[data-a]');if(t&&!t.disabled)A[t.dataset.a](t.dataset.v)};
+E('mn').onkeydown=e=>{if(e.key=='Enter'||e.key==' '){const t=e.target.closest('g[data-a],div[role=button][data-a]');if(t){e.preventDefault();A[t.dataset.a](t.dataset.v)}}};
+E('mn').addEventListener('dragstart',e=>{const t=e.target.closest('[data-a=c3]');if(t){e.dataTransfer.setData('text/plain',t.dataset.v);S.m[2].sel=t.dataset.v}});
+E('mn').addEventListener('dragover',e=>{if(e.target.closest('[data-a=t3]'))e.preventDefault()});
+E('mn').addEventListener('drop',e=>{const t=e.target.closest('[data-a=t3]');if(t){e.preventDefault();A.t3(t.dataset.v)}});
+function fit(){const w=document.documentElement.clientWidth||innerWidth,h=innerHeight,s=Math.min(w/1280,h/720),st=E('stage').style;st.left='0px';st.top='0px';st.transform='translate('+((w-1280*s)/2)+'px,'+((h-720*s)/2)+'px) scale('+s+')'}
+addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,200));addEventListener('load',fit);fit();go('cover');
+</script></body></html>
